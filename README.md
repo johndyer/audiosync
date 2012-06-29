@@ -1,17 +1,18 @@
 Audio Sync Tools
 ======================
 
-==Aligner Using SMU Sphinx==
+## Aligner Using SMU Sphinx
 
 In the folder `aligner`, you'll find code - all based on Weston Ruter's work - that attempts to download
 SMU Sphinx, then do some work to sync files. The Gettysberg address file is the easist to work with.
 
-==JavaScript Library==
+## JavaScript Library
 
 In the folder 'demo', you'll find the aligner code with several examples. The file `dream.html` aligns to inpage HTML, while
 `esvbible-local.html` aligns to HTML loaded via AJAX.
 
-==Dependencies==
+Dependencies
+------------
 
 * Python 2.7
 * java
