@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Bible Karaoke</title>
+     
+		<script src="jquery-1.7.2.js"></script>
+		
+		<script src="bible.data.js"></script>
+		<script src="audioaligner.js"></script>
+		
+		<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background: #000;
+			font-family: Baskerville;
+		}
+		#container {
+			width: 500px;
+			margin: 0 auto 20px; 
+			background: #fff;
+			border: solid 5px #38342b;
+			border-radius: 5px;
+		}
+		
+		#header {
+			margin: 20px auto 0; 
+			width: 500px;
+			color: #fff;
+			padding: 10px;
+			text-align: center;
+		}
+		
+		#header h1 {
+			margin: 0;
+		}
+		
+		#menu {
+			background: #ddd;
+			padding: 10px;
+			position: relative;
+			height: 30px;
+		}
+		
+		#player {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			width: 200px;
+			
+		}
+		
+		#content {
+			padding: 30px;
+			min-height: 300px;
+			line-height: 1.4;
+		}
+		
+		#footer {
+			background: #ccc;
+			color: #333;
+			font-size: 11px;
+			padding: 10px;
+			
+		}
+		
+		.chapter {
+			line-height: 1.4;
+			
+		}
+		.cf, .note {
+			display: none;
+		}
+		.verse-num {
+			background: #ccc;
+			border: solid 1px #333;
+			border-radius: 2px;
+			display: inline-block;
+			margin: 0 5px 0 0;
+			padding: 0  0 0 3px;
+		}
+		.word-data {
+			-x-background: #ffffee;
+		}
+		.current-word {
+			background: yellow;
+			outline: solid 2px yellow;
+			box-shadow: 0 0 10px rgba(0,0,0,0.5);
+		}
+		.aligned-word:hover {
+			cursor: pointer;
+			background: #FEFFDC;
+		}
+		</style>
+		
+		
+    </head>
+    <body>
+	
+		<div id="header">
+			<h1>Bible Karaoke</h1>
+			
+			<p>
+			To begin, select a chapter, press load, then press play.
+			<br>Click on words to navigate.</p>
+		</div>	
+		
+		<div id="container">
+			
+
+			
+			<div id="menu">
+				<select id="chapter"></select>
+				<input id="load" type="button" value="Load" />
+				<div id="player-box">
+					<audio id="player" controls width="250" type="audio/mp3"></audio>
+				</div>
+			</div>
+			
+			<div id="content">
+				
+			
+				<div id="target"></div>
+			</div>
+			
+			<div id="footer">
+				<p>Based on ideas by <a href="http://weston.ruter.net/">Weston Ruter</a>, specifically his <a href="https://github.com/westonruter/esv-text-audio-aligner">ESV Audio Aligner</a> which uses <a href="http://cmusphinx.sourceforge.net/">SMU Sphinx</a> library to align audio and text.</p>
+				<p>Scripture taken from The Holy Bible, English Standard Version. Copyright &copy;2001 by <a href="http://www.crosswaybibles.org">Crossway Bibles</a>, a publishing ministry of Good News Publishers. Used by permission. All rights reserved. Text provided by the <a href="http://www.gnpcb.org/esv/share/services/">Crossway Bibles Web Service</a>.</p>
+			</div>
+			
+		</div>
+		
+		
+<script>
+
+// check for MP3
+
+var audio = document.getElementById('player');
+
+if (!(audio.canPlayType && (audio.canPlayType('audio/mp3') || audio.canPlayType('audio/mpeg')) )) {
+	alert('Please use a browser that can play MP3s like Chrome, Safari, IE9');
+}
+
+
+
+// create alinger object
+var aligner = new AudioAligner(document.getElementById('target'), audio); 
+
+// setup buttons
+var chapter = $('#chapter');
+var load = $('#load');
+
+load.on('click', function() {
+	loadEsv( chapter.val() );
+});
+
+// fill select list
+var html = '';
+for (var osisName in bible.BOOK_DATA) {
+	var book = bible.BOOK_DATA[osisName],
+		name = book.names["en"][0],
+		chapters = book.chapters.length;
+	
+	html += '<optgroup label="' + name + '">';
+	
+	for (var i=1; i<=chapters; i++) {
+		html += '<option value="' + osisName + '.' + i.toString() + '">' + name + ' ' + i.toString() + '</option>';
+	}
+	
+	
+	html += '</optgroup>';
+}
+chapter.html(html);
+
+function loadEsv(osis) {
+	
+	$(aligner.target).html('Loading...');
+	
+	var textUrl = 'http://www.esvapi.org/crossref/ref.php?reference=' + encodeURIComponent(osis),
+		audioUrl = 'http://www.esvapi.org/v2/rest/passageQuery?key=IP&output-format=mp3&passage=' + encodeURIComponent(osis),
+		timingUrl = 'timing/en_esv/' + osis + '.timings.json';
+	
+	jQuery.ajax({
+		url: textUrl,
+		dataType: 'jsonp',
+		success: function(data) {
+			
+			// pull in HTML
+			$(aligner.target).html(data.content);
+			
+			// align audio
+			aligner.align(audioUrl, timingUrl);
+		}
+	});	
+}
+
+</script>
+
+
+    </body>
+</html>
