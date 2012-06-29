@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svnroot/cmusphinx/!svn/ver/11311/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/linguist/language/grammar
+END
+AlignerGrammar.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svnroot/cmusphinx/!svn/ver/11311/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/linguist/language/grammar/AlignerGrammar.java
+END
+NoSkipGrammar.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svnroot/cmusphinx/!svn/ver/11250/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/linguist/language/grammar/NoSkipGrammar.java
+END

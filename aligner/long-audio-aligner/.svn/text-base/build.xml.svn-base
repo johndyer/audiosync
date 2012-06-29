@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ********************************************************** -->
+<!-- *                                                        * -->
+<!-- * Apache Ant build file used to build the Sphinx-4 demo.* -->
+<!-- * To build the demo, just type the following:           * -->
+<!-- *                                                        * -->
+<!-- *     ant all					                          * -->
+<!-- *                                                        * -->
+<!-- * For more information:  http://ant.apache.org/          * -->
+<!-- *                                                        * -->
+<!-- ********************************************************** -->
+<project basedir="." default="all" name="AlignerProject">	
+	<!-- Setting Path Variables -->
+	<property name="src_dir" value="./src"/>
+	<property name="build_dir" value="./build"/>
+	<property name="lib_dir" value="./lib/"/>
+	<property name="bin_dir" value="bin"/>
+	<path id="libs">
+	        <pathelement path="${bin_dir}"/>
+	        <pathelement location="${lib_dir}/sphinx4.jar"/>
+	        <pathelement location="${lib_dir}/freetts.jar"/>
+	        <pathelement location="${lib_dir}/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
+	</path>
+	
+	<target name="all"
+	            depends="compile, run"
+	            description="Compiles and jars the demos"/>
+	
+	<target name="compile">
+			<mkdir dir="${build_dir}"/>
+	        <mkdir dir="${build_dir}/edu/cmu/sphinx/demo/aligner"/>
+	        <javac debug="true"
+	               listfiles="true"
+	               deprecation="true"
+	               includeAntRuntime="false"
+	               srcdir="${src_dir}"
+	               destdir="${build_dir}"
+	               includes="**/*.java">
+	            <classpath refid="libs"/>
+	        </javac>
+	        <jar destfile="${bin_dir}/aligner.jar"
+	             manifest="${src_dir}/MANIFEST.MF"
+	             basedir="${build_dir}"
+	             includes="**/*.*"
+	             compress="true"/>
+	</target>
+	<target name="run" depends="compile">
+		<java jar="${bin_dir}/aligner.jar" fork="true">
+			<jvmarg value="-Xms400m"/>
+			<jvmarg value="-Xmx1500m"/>
+		</java>
+	</target>  
+</project>

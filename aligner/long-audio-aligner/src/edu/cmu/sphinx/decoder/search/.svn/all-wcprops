@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svnroot/cmusphinx/!svn/ver/11305/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/decoder/search
+END
+AlignerSearchManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svnroot/cmusphinx/!svn/ver/11305/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/decoder/search/AlignerSearchManager.java
+END
+SimpleLoggedBreadthFirstSearchManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svnroot/cmusphinx/!svn/ver/11248/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/decoder/search/SimpleLoggedBreadthFirstSearchManager.java
+END

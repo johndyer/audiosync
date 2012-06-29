@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/cmusphinx/!svn/ver/11305/branches/long-audio-aligner/Aligner/resource/models
+END
+abbrev.txt
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/cmusphinx/!svn/ver/11092/branches/long-audio-aligner/Aligner/resource/models/abbrev.txt
+END
+cmudict04_lts.bin
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svnroot/cmusphinx/!svn/ver/11092/branches/long-audio-aligner/Aligner/resource/models/cmudict04_lts.bin
+END
+wordFile.txt
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svnroot/cmusphinx/!svn/ver/11230/branches/long-audio-aligner/Aligner/resource/models/wordFile.txt
+END
+num.txt
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/cmusphinx/!svn/ver/11305/branches/long-audio-aligner/Aligner/resource/models/num.txt
+END

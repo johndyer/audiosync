@@ -1,0 +1,139 @@
+------------------------------------------------- Implementation of AFlatLinguist -----------------------------------------------------
+
+=====================================================  FlatSearchState  ===============================================================
+Defines the basic functionalities that a Search State must provide to be a valid entity in Flat Search Graph.
+	* getSuccessors() 	:  Returns:- SearchStateArc[]
+				   These returned arcs lead to successors of the current state. These successors might not be of the 
+				   same search state. This gives us a very powerful way of creating dynamic graphs.
+					
+	* getOrder()      	:  Returns:- int 
+				   Defines the type current search state belongs to amongst all the search state types present in the
+				   search space.
+	
+	* getCachedSuccessors()	:  Returns:- SearchStateArc[]
+				   A cache is maintained to keep track of all the successors that are yet to be visited for scoring.
+				   This function returns the required arcs that leads to these successors.
+
+	* cacheSuccessors()	:  Returns:- void
+				   puts successors into the cache.
+
+===================================================== GrammarState ====================================================================
+Built on the guidlines defined in FlatLinguist, it represents a grammar node  in the Search Graph.
+Packages the following 4 information about the grammar node in this state:
+	* node 			:  DataType:- GrammaNode 
+				   It is a node from the grammar graph which this state represents in the search space.
+	
+	* lc (left Context)	:  DataType:- int
+				   Seems to represents (context information about?) the units that were visited before the current unit.
+	
+	* nextBaseID		:  DataType:- int
+				   Yet again no clue what this is supposed to be used for. Some how it also helps decide which successors 
+				   to filter successors in the cache. 				   
+	
+	*languageProbability	:  DataType:- float
+				   Self explanatory.
+
+The description of a few generic functions of FlatSearchState that GrammarState defines are as follows:
+	* getSuccessors()	:  if the current state is final then we don't have any successors to this state. In all other cases the 
+				   current state has successors which can be either the pronunciation of the word or units that comprise 
+				   of the current pronunciation state.
+In Search state hierarchy Grammar State leads to Pronunciation State ( described later ) which leads to Units State in the form of 
+FullHMMSearchState. This is important since a changes have to be made at the right level in the hierarchy to see correct results. 
+
+
+
+====================================  Modifications made in DFlatLinguist to form AFlatLinguist =======================================
+We wanted to insert phoneloop between all word transitions to capture presence of OOV words without compromising alot with recognition 
+accuracy, speed and memory requirements.
+
+DynamicFlatSearchGraph.getInitialState {
+	InitialState initialState = new InitialState();
+	initialState.addArc(new GrammarState(grammar.getInitialNode()));            
+	if (addOutOfGrammarBranch) {
+		OutOfGrammarGraph oogg = new OutOfGrammarGraph
+		(phoneLoopAcousticModel,logOutOfGrammarBranchProbability,
+                                logPhoneInsertionProbability);
+		initialState.addArc(oogg.getOutOfGrammarGraph());
+	}
+	return initialState;
+}
+
+The above implementation statically inserts 1 phoneloop branching out from the start of Search Graphs initial State. Adding similar 
+phoneloops between words at this stage allocates alot of memory to search graph, all of which is not necessarily in use. So I plan 
+to insert phoneloops as successors to a Grammar State which is currently being scored . This way at any point in time atmost 1 phoneloop 
+has to be stored in the memory ( i.e. only when getSuccessors() of a GrammarState is invoked ).
+
+OutOfGrammarGraph.LastBranchState.LastBranchState() {
+	successors = new SearchStateArc[2];
+	successors[0] = fbs;
+	successors[1] = new FinalState();
+}
+Obviously we don't want to have one of the successors of the phoneloop to be finalstate. Rather we want the final state to be the one defined in
+the grammar. So a quick fix was made to make the current GrammarState as the third successor of the phoneloop ( which allows returning back to 
+original grammar graph possible after the OOV word has been recognised).
+
+
+---------------------------------------------------  Implementation of WordErrorCount -----------------------------------------------------------
+
+Notations used in all examples :
+i) Word with same same symbol contain same text, start and end times.
+ii) Words in the recognised result will be represented by single character eg. A .
+iii) A word followed by ( i / d / s) shall mean that the word is (i) inserted (d) deleted (s) substituted from
+the reference text.
+
+Word : Captures the essence of a word unit in the utterance. It contains a String representing the text
+spoken, and a start and end time representing the time at which the word is uttered in audio. Equality of
+two words is defined by comparing both the text and time component of the two Words.
+
+Word Error Count's traceback procedure was designed to rely only on the definition of equality of Words to generate the 
+aligned result. Earlier implementation also treated <unk> as a comparable word.
+
+Problems in using the above implementation were :
+
+i) if <unk> word is _only_ equal to <unk> with same start and end time, then none of the corrected deletions can
+be accounted for.
+eg.  Ref:   A  B  C (d) D  E  F
+       Hyp:  A  B  <unk> D  E  F
+In this case, Word Error Count must ideally report 0 % word error rate. But by defn. <unk> can't be equal to C , leads
+to 1 substitution.
+
+ii) if <unk> word is equal to all words irrespective of their start and end times, then recogniser's mistakes will be over
+looked.
+eg.  Ref: A  B  C  D  E  F
+       Hyp:  A  B  <unk> D  E  F
+In this case, C was not deleted but <unk> will be (by definition) assumed to have correctly captured the presence of C
+in the utterance. Which obviously is wrong.
+
+iii) if <unk> is equal to all words irrespective of their start and end times but they have to be tagged as either deleted or
+substituted, then most of the problems would be solved except the ones where an <unk> in Ref splits into multiple <unk>
+in Hyp or when consecutive words are deleted from the Ref.
+eg. Ref: A  B  C (d)  D (d) E  F
+      Hyp:  A  B  <unk>  E  F
+Word Error Count would match <unk> with exactly one of C or D , however ideally they both have been identified.
+
+I am trying to resist myself from writing a huge if - else structure for this, not just because it would be highly complex and
+reading and understanding it would be really difficult for future contributors but because I am not sure if one can list all 
+the cases that can occur and being exhaustive is important when counting word errors.
+
+So here is my proposal of what I am about to implement:
+Step 1: Treat <unk> as a word not equal to any other word irrespective of it's text, start and end times.
+
+Step 2: Any number of <unk> in between two correctly aligned words of Hyp. will account for all <unk>, deleted and substituted
+words between the corresponding words words in Ref.
+
+So a typical corrected Word Error Count implementation's report for the following eg.:
+Ref: A  B  C (d) <unk>  D  E  F
+Hyp:  A  B  <unk> E  F
+Result : Total Insertions : 0         Total Deletions : 1      Total Substitution : 0
+            Total Corrected Ins: 0    Total Corrected Del: 1  Total Corrected Subs: 0
+            Total Word Errors: 1  
+This according to me is a perfect result for a typical program to count timed word errors.
+
+Configurations:
+i) small files (upto 5 mins long):
+	<property name="absoluteBeamWidth" value="-1" />
+	<property name="relativeBeamWidth" value="1E-200" />
+	<property name="outOfGrammarProbability" value="1E-8"/>
+	<property name="phoneInsertionProbability" value="1E-85"/>
+ii) large files (upto 20 mins long) :
+

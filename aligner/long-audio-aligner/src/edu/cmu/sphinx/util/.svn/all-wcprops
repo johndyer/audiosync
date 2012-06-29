@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/cmusphinx/!svn/ver/11305/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util
+END
+PronunciationGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svnroot/cmusphinx/!svn/ver/11305/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util/PronunciationGenerator.java
+END
+StringCustomise.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svnroot/cmusphinx/!svn/ver/11305/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util/StringCustomise.java
+END
+FragmentAudio.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svnroot/cmusphinx/!svn/ver/11248/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util/FragmentAudio.java
+END
+StringErrorGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svnroot/cmusphinx/!svn/ver/11245/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util/StringErrorGenerator.java
+END
+Word.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svnroot/cmusphinx/!svn/ver/11092/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util/Word.java
+END
+AlignerTestCase.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svnroot/cmusphinx/!svn/ver/11245/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util/AlignerTestCase.java
+END
+WordErrorCount.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svnroot/cmusphinx/!svn/ver/11245/branches/long-audio-aligner/Aligner/src/edu/cmu/sphinx/util/WordErrorCount.java
+END

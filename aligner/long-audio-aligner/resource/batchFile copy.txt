@@ -1,0 +1,1 @@
+../data/gettysburg/gettysburgaddress.txt ../data/gettysburg/gettysburgaddress.wav
